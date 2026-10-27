@@ -540,6 +540,21 @@
   .inv-row { display:flex; align-items:center; gap:.5rem; padding:.5rem 0; border-bottom:1px solid var(--line); } .inv-row:last-of-type { border-bottom:none; } .inv-row > span:first-child { flex:1; min-width:0; } .inv-row small { display:block; color:var(--ink-soft); font-size:.76rem; font-weight:700; }
   .inv-card .inv-title { display:block; font-family:var(--display); font-size:1.7rem; line-height:1.05; margin-top:.2rem; } .inv-card > small { display:block; color:var(--ink-soft); font-weight:700; } .inv-ok { background:var(--gazon-tint); color:var(--gazon); font-weight:800; border-radius:10px; padding:.6rem .7rem; }
   .today-card.inv { border-left-color:var(--chasuble); }
+  .presence.late { border-color:var(--or); background:#FFF6DC; color:var(--or-ink); } .presence.off { border-color:var(--alert); color:var(--alert); background:var(--alert-tint); }
+  .motif-row { margin-top:.5rem; } .motif-row .chip { padding:.3rem .6rem; font-size:.78rem; }
+  .abs-open { display:inline-block; margin-top:.5rem; } .abs-line { margin:.5rem 0 0; font-size:.86rem; font-weight:700; color:var(--chasuble-ink); } .abs-box { margin-top:.5rem; background:var(--surface-2); border-radius:10px; padding:.6rem; } .abs-box .chips { margin:.3rem 0 .3rem; }
+  .obj-card { border-left:5px solid var(--parquet); } .obj-line { display:flex; gap:.6rem; align-items:flex-start; padding:.4rem 0; border-bottom:1px solid var(--line); font-weight:700; font-size:.9rem; } .obj-line:last-child { border-bottom:none; }
+  .obj-line small { display:block; font-weight:600; color:var(--ink-soft); font-size:.76rem; } .obj-ic { width:1.4rem; height:1.4rem; border-radius:50%; border:2px solid var(--line); display:grid; place-items:center; flex-shrink:0; font-size:.8rem; font-weight:900; } .obj-line.done .obj-ic { background:var(--gazon); border-color:var(--gazon); color:#fff; }
+  .obj-kid-head { display:flex; justify-content:space-between; align-items:center; } .obj-chip { font-size:.78rem; padding:.3rem .65rem; } .ghost-chip { border-style:dashed; color:var(--ink-soft); font-size:.78rem; padding:.3rem .65rem; }
+  .kb-chip { display:inline-block; margin-left:.4rem; border:1px solid var(--parquet); color:var(--parquet); background:var(--parquet-tint); border-radius:999px; padding:.05rem .5rem; font-size:.7rem; font-weight:800; cursor:pointer; vertical-align:middle; }
+  .kb-overlay { position:fixed; inset:0; z-index:60; background:rgba(8,14,10,.6); display:flex; align-items:flex-start; justify-content:center; padding:calc(1rem + env(safe-area-inset-top,0px)) 1rem 1rem; overflow-y:auto; }
+  .kb-card { background:var(--surface); color:var(--ink); border-radius:20px; width:100%; max-width:560px; padding:1rem 1.1rem 1.2rem; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  .kb-top { display:flex; justify-content:space-between; align-items:center; font-weight:800; color:var(--ink-soft); } .kb-top .wrap-close { background:var(--surface-2); color:var(--ink); }
+  .kb-head b { display:block; font-family:var(--display); font-size:2rem; line-height:1.05; margin-top:.3rem; } .kb-head small { display:block; color:var(--ink-soft); font-weight:700; }
+  .kb-sec { border-top:1px solid var(--line); margin-top:.8rem; padding-top:.6rem; } .kb-sec h4 { margin:0 0 .3rem; font-size:.95rem; } .kb-sec p { margin:.2rem 0; font-size:.9rem; } .kb-sec ul { margin:.2rem 0 0; padding-left:1.1rem; font-size:.9rem; } .kb-sec small { color:var(--ink-soft); font-weight:700; }
+  .kb-mot { font-style:italic; } .kb-mot small { display:block; font-style:normal; } .kb-foot { margin-top:1rem; font-size:.78rem; color:var(--ink-soft); }
+  .kb-actions { margin-top:.8rem; } .kb-code { background:var(--gazon-tint); border-radius:12px; padding:.7rem .8rem; text-align:center; } .kb-code small, .kb-code span { display:block; font-size:.78rem; color:var(--ink-soft); font-weight:700; } .kb-code b { display:block; font-family:var(--display); font-size:2rem; letter-spacing:.06em; color:var(--gazon); }
+  @media print { body * { visibility:hidden !important; } .kb-overlay, .kb-overlay * { visibility:visible !important; } .kb-overlay { position:absolute; inset:0; background:#fff; padding:0; } .kb-card { box-shadow:none; max-width:none; } .kb-actions, .kb-top button, .kb-card > .hint { display:none !important; } }
   .today-none { font-weight:800; margin:.2rem 0 .6rem; }
   .fill-title { margin-top:1.6rem; padding-top:1rem; border-top:2px dashed var(--line); scroll-margin-top:12px; }
   .fam-act { display:flex; align-items:center; gap:.7rem; } .fam-act b { font-family:var(--display); font-size:1.8rem; color:var(--gazon); } .fam-act span { font-size:.88rem; font-weight:700; }
@@ -804,7 +819,7 @@ function load() {
     if (raw) Object.assign(S.data, JSON.parse(raw));
     if (!S.data.simDate && (S.data.realVer || 0) < 15) { S.data = DATA0(); setVersion('v0'); }
     if (!S.data.simDate && S.data.club.version === 'v0') setVersion('v0');
-    if (S.data.club && S.data.club.modules) S.data.club.modules.communaute = true;
+    if (S.data.club && S.data.club.modules) { S.data.club.modules.communaute = true; S.data.club.modules.presences = true; }
     if (!S.data.simDate) { S.data.club.modules.plateaujour = true; S.data.club.modules.croissance = true; ensureDemoPj(); S.data.birthdays = Object.assign(DEFAULT_BIRTHDAYS(), S.data.birthdays || {}); }
     Object.values(S.data.sessions || {}).forEach(list => list.forEach(se => {
       Object.keys(se.badges || {}).forEach(p => { if ((se.badges[p] || []).map(badgeId).includes('mvp')) { se.stars = se.stars || []; if (!se.stars.some(x => x.name === p)) se.stars.push({ id:'m' + (se.id || se.date) + p, name:p, type:'progres', text:'', img:null, ts:tsOf(se) }); }
@@ -817,7 +832,7 @@ function load() {
 function save() {
   try {
     const d = S.data;
-    localStorage.setItem(storageKey(), JSON.stringify({ simDate:d.simDate || '', simVer:d.simVer || 0, simTime:d.simTime || '', realVer:d.realVer || 0, pjInvites:d.pjInvites, premsg:d.premsg, pjRes:d.pjRes, pjResTs:d.pjResTs, club:d.club, opens:d.opens, growth:d.growth, shopClicks:d.shopClicks, plateaux:d.plateaux, pjClock:d.pjClock || '', sessions:d.sessions, objectives:d.objectives, messages:d.messages, playerNotes:d.playerNotes, parentNotes:d.parentNotes, posts:d.posts, rosters:d.rosters, birthdays:d.birthdays, events:d.events, consent:d.consent, prefs:d.prefs, plans:d.plans, seen:d.seen, testConfig:d.testConfig }));
+    localStorage.setItem(storageKey(), JSON.stringify({ absences:d.absences, seasonObj:d.seasonObj, childObj:d.childObj, parcours:d.parcours, transfers:d.transfers, simDate:d.simDate || '', simVer:d.simVer || 0, simTime:d.simTime || '', realVer:d.realVer || 0, pjInvites:d.pjInvites, premsg:d.premsg, pjRes:d.pjRes, pjResTs:d.pjResTs, club:d.club, opens:d.opens, growth:d.growth, shopClicks:d.shopClicks, plateaux:d.plateaux, pjClock:d.pjClock || '', sessions:d.sessions, objectives:d.objectives, messages:d.messages, playerNotes:d.playerNotes, parentNotes:d.parentNotes, posts:d.posts, rosters:d.rosters, birthdays:d.birthdays, events:d.events, consent:d.consent, prefs:d.prefs, plans:d.plans, seen:d.seen, testConfig:d.testConfig }));
     return true;
   } catch (e) { return false; }
 }
@@ -880,11 +895,86 @@ function lowPresence(catId) {
   return players(catId).filter(p => { let t = 0, pr = 0; r.forEach(s => { if (s.presence && p in s.presence) { t++; if (s.presence[p]) pr++; } }); return t >= 2 && pr / t < .5; });
 }
 function vigilance(catId) { const f = {}; sessions(catId).forEach(s => players(catId).forEach(p => { if (s.vigilance && s.vigilance[p]) f[p] = 1; })); return Object.keys(f); }
+const MOTIFS = [['malade','🤒 Malade'],['blesse','🤕 Blessé'],['famille','👨‍👩‍👧 Famille'],['ecole','🏫 École'],['transport','🚗 Transport'],['autre','Autre']];
+const motifLabel = id => ((MOTIFS.find(m => m[0] === id) || [])[1] || '').replace(/^\S+\s/, '') || '';
+const absKey = (cid, date, p) => cid + '|' + date + '|' + p;
+// Absences signalées à l'avance par les parents pour une date donnée
+const presTxt = (s, p) => !s.presence || !(p in s.presence) ? '—' : s.presence[p] ? ((s.retard || {})[p] ? 'En retard' : 'Présent') : 'Absent' + ((s.motif || {})[p] ? ' · ' + motifLabel(s.motif[p]) : '');
+const OBJ_LIST = {
+  u67:['Conduire le ballon en gardant la tête levée', 'Jouer avec les deux pieds', 'Garder l\'équilibre en courant avec le ballon', 'Oser aller vers le but', 'Faire une passe à un copain', 'Écouter les consignes', 'Respecter les règles du jeu', 'Encourager les copains'],
+  u89:['Dribbler pour éliminer un adversaire', 'Faire une passe au bon moment', 'Utiliser son pied faible', 'Se démarquer pour recevoir le ballon', 'Frapper au but du bon pied', 'Revenir aider à défendre', 'Respecter les adversaires et l\'arbitre', 'Encourager les copains'],
+  acad:['Réussir 10 jongles', 'Conduire le ballon des deux pieds', 'Comprendre les règles du jeu', 'Faire une passe précise', 'Prendre confiance avec le ballon', 'Jouer en équipe', 'Écouter les consignes']
+};
+const objList = cid => OBJ_LIST[(cat(cid) || {}).bgroup] || OBJ_LIST.u89;
+const groupObj = cid => ((S.data.seasonObj || {})[cid] || {}).group || [];
+const childObjOf = (cid, p) => (S.data.childObj || {})[cid + '|' + p] || {};
+const objsOf = (cid, p) => { const c = childObjOf(cid, p); return [...new Set(groupObj(cid).concat(c.extra || []))].map(l => ({ l, done:(c.done || {})[l] || null, perso:(c.extra || []).includes(l) })); };
+function objCardParent(cid, name) {
+  const os = objsOf(cid, name), first = name.split(' ')[0]; if (!os.length) return '';
+  const n = os.filter(o => o.done).length;
+  return `<div class="card obj-card"><strong>🎯 Ses objectifs de la saison</strong><p class="hint" style="margin:.2rem 0 .5rem">Fixés par l'éducateur en début de saison${(S.data.seasonObj || {})[cid] && S.data.seasonObj[cid].set ? ' (le ' + fmtDate(S.data.seasonObj[cid].set) + ')' : ''}. Point d'étape en janvier, bilan en juin. ${n}/${os.length} atteint${n > 1 ? 's' : ''} pour l'instant.</p>` +
+    os.map(o => `<div class="obj-line${o.done ? ' done' : ''}"><span class="obj-ic">${o.done ? '✓' : ''}</span><span>${esc(o.l)}${o.perso ? ' <small>rien que pour ' + esc(first) + '</small>' : ''}${o.done ? `<small>atteint le ${fmtDate(o.done)}</small>` : '<small>en cours</small>'}</span></div>`).join('') + '</div>';
+}
+function renderObjectives(catId) {
+  const so = (S.data.seasonObj || {})[catId] || {}, g = so.group || [], list = objList(catId);
+  let h = `<div class="card"><strong>🎯 Objectifs du groupe pour la saison</strong><p class="hint" style="margin:.2rem 0 .6rem">Choisis 2 ou 3 objectifs pour tout le groupe${so.set ? ' (fixés le ' + fmtDate(so.set) + ')' : ''}. Ils s'appliquent à chaque enfant. Point d'étape en janvier, bilan en juin. Les parents les voient.</p><div class="chips">` +
+    list.map(l => `<button class="chip${g.includes(l) ? ' active' : ''}" data-act="gobj" data-v="${esc(l)}">${esc(l)}</button>`).join('') + '</div></div>';
+  if (!g.length) return h + '<div class="empty">Choisis d\'abord les objectifs du groupe. Ensuite, tu pourras ajouter un objectif perso à quelques enfants et cocher ce qui est atteint.</div>';
+  h += '<h3 class="sub">Par enfant</h3><p class="hint" style="margin:-.3rem 0 .6rem">Touche un objectif quand il est atteint. « + Perso » ajoute un objectif rien que pour cet enfant (2 au plus).</p>';
+  players(catId).forEach(p => {
+    const os = objsOf(catId, p), c = childObjOf(catId, p), n = os.filter(o => o.done).length, open = S.objPanel === p;
+    h += `<div class="card obj-kid"><div class="obj-kid-head"><b>${esc(p)}</b><span class="pill ${n === os.length ? 'ok' : 'wait'}">${n}/${os.length}</span></div><div class="chips" style="margin:.4rem 0 0">` +
+      os.map(o => `<button class="chip obj-chip${o.done ? ' active' : ''}" data-act="cobj-done" data-p="${esc(p)}" data-v="${esc(o.l)}">${o.done ? '✓ ' : ''}${esc(o.l)}${o.perso ? ' ★' : ''}</button>`).join('') +
+      ((c.extra || []).length < 2 ? `<button class="chip ghost-chip" data-act="cobj-panel" data-p="${esc(p)}">+ Perso</button>` : '') + '</div>' +
+      (open ? '<div class="chips" style="margin:.5rem 0 0">' + list.filter(l => !os.some(o => o.l === l)).map(l => `<button class="chip" data-act="cobj-add" data-p="${esc(p)}" data-v="${esc(l)}">${esc(l)}</button>`).join('') + '</div>' : '') +
+      ((c.extra || []).length ? `<button class="link-btn" style="margin-top:.4rem" data-act="cobj-clear" data-p="${esc(p)}">Retirer ses objectifs perso</button>` : '') + '</div>';
+  });
+  return h;
+}
+// Le bilan appartient à la famille : le parent le garde et le transmet (code ou PDF). Récit de progression, jamais de note.
+const SAISON = () => { const d = now(), y = d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; return y + '-' + (y + 1); };
+function kidSnap(cid, name) {
+  const c = cat(cid), ss = sessions(cid).filter(s => s.date >= SAISON().slice(0, 4) + '-08-01'), withP = ss.filter(s => s.presence && name in s.presence);
+  const pres = withP.filter(s => s.presence[name]).length, late = withP.filter(s => s.presence[name] && (s.retard || {})[name]).length;
+  const bc = {}; ss.forEach(s => ((s.badges || {})[name] || []).forEach(b => { const i = badgeInfo(b); if (i) bc[i.label] = (bc[i.label] || 0) + 1; }));
+  const sc = {}; ss.forEach(s => (s.stars || []).filter(x => x.name === name).forEach(x => { const l = starType(x.type).label; sc[l] = (sc[l] || 0) + 1; }));
+  return { name, birth:(S.data.birthdays || {})[cid + '|' + name] || '', cat:c.name, club:CLUB.name, saison:SAISON(), date:todayISO(),
+    presence:{ n:pres, total:withP.length, late }, objectifs:objsOf(cid, name).map(o => ({ l:o.l, done:o.done })),
+    qualites:qualities(cid, name).map(x => x.q.ic + ' ' + x.q.txt), badges:Object.entries(bc).sort((a, b) => b[1] - a[1]).slice(0, 6), stars:Object.entries(sc),
+    mots:parentNotes(cid, name).slice(0, 3).map(n => ({ date:n.date, text:n.text, author:n.author || '' })), parcours:((S.data.parcours || {})[cid + '|' + name] || []).map(x => x.snap) };
+}
+function snapHTML(sn, opts) {
+  const first = sn.name.split(' ')[0], age = sn.birth ? ' · né(e) le ' + new Date(sn.birth + 'T12:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+  const sec = (t, b) => b ? `<div class="kb-sec"><h4>${t}</h4>${b}</div>` : '';
+  let h = `<div class="kb-head"><b>${esc(sn.name)}</b><small>${esc(sn.cat)} · ${esc(sn.club)} · saison ${esc(sn.saison)}${esc(age)}</small></div>`;
+  h += sec('📅 Assiduité', sn.presence.total ? `<p>${sn.presence.n} séance${sn.presence.n > 1 ? 's' : ''} sur ${sn.presence.total}${sn.presence.late ? `, dont ${sn.presence.late} en retard` : ''}.</p>` : '<p>Pas encore de séance notée.</p>');
+  h += sec('🎯 Objectifs de la saison', sn.objectifs.length ? '<ul>' + sn.objectifs.map(o => `<li>${o.done ? '✓ ' : ''}${esc(o.l)}${o.done ? ' <small>(atteint)</small>' : ' <small>(en cours)</small>'}</li>`).join('') + '</ul>' : '');
+  h += sec('🌟 Ce qu\'on remarque', sn.qualites.length ? '<ul>' + sn.qualites.map(q => `<li>${esc(first)} ${esc(q.replace(/^\S+\s/, ''))}</li>`).join('') + '</ul>' : '');
+  h += sec('🏅 Badges reçus', sn.badges.length ? '<p>' + sn.badges.map(([l, n]) => esc(l) + (n > 1 ? ' ×' + n : '')).join(' · ') + '</p>' : '');
+  h += sec('⭐ Étoiles de plateau', sn.stars.length ? '<p>' + sn.stars.map(([l, n]) => esc(l) + (n > 1 ? ' ×' + n : '')).join(' · ') + '</p>' : '');
+  h += sec('💬 Mots des éducateurs', sn.mots.length ? sn.mots.map(m => `<p class="kb-mot">« ${esc(m.text)} »<small>${esc(m.author)} · ${fmtDate(m.date)}</small></p>`).join('') : '');
+  if (sn.parcours && sn.parcours.length) h += sec('🧭 Son parcours avant', sn.parcours.map(p => `<p><b>${esc(p.club)}</b> · ${esc(p.cat)} · saison ${esc(p.saison)}${p.presence && p.presence.total ? ` · ${p.presence.n}/${p.presence.total} séances` : ''}${p.qualites && p.qualites.length ? '<br><small>' + p.qualites.map(q => esc(q)).join(' · ') + '</small>' : ''}</p>`).join(''));
+  return h + `<p class="kb-foot">Bilan de progression établi avec MaSaison le ${fmtDate(sn.date)}. Ce n'est pas une évaluation ni une note : il raconte la saison de ${esc(first)} pour aider le prochain éducateur à bien l'accueillir.</p>`;
+}
+function renderKidBilan() {
+  const b = S.kidBilan, sn = b.snap || kidSnap(b.cid, b.name);
+  return `<div class="kb-overlay" role="dialog" aria-label="Bilan de saison"><div class="kb-card"><div class="kb-top"><span>📄 Bilan de saison</span><button class="wrap-close" data-act="kb-close" aria-label="Fermer">✕</button></div>${snapHTML(sn)}
+    ${b.snap ? `<p class="hint">Bilan reçu ${b.from ? 'de ' + esc(b.from) : ''}. La famille l'a transmis avec son accord.</p>` : `<div class="kb-actions">${b.code ? `<div class="kb-code"><small>Code à donner au nouveau club</small><b>${b.code}</b><span>Valable 30 jours. Le nouvel éducateur le saisit dans « Mon groupe ». Rien n'est transmis sans ce code.</span></div>` : '<button class="btn block orange" data-act="kb-transfer">🔁 Transmettre au prochain club</button>'}<button class="btn block ghost" data-act="kb-print">🖨️ Enregistrer en PDF ou imprimer</button></div>
+    <p class="hint">Le bilan appartient à votre famille. C'est vous qui décidez de le transmettre. Les données de croissance (Il grandit) n'y figurent jamais.</p>`}</div></div>`;
+}
+function bilanImportCard(catId) {
+  return `<div class="card"><strong>📥 Un nouveau joueur arrive avec son bilan ?</strong><p class="hint" style="margin:.2rem 0 .5rem">Les parents te donnent le code de son bilan. Tu retrouves ce qu'il a fait et où il en est, pour bien l'accueillir.</p><div class="row"><input type="text" id="kb-code" placeholder="BIL-0000" autocomplete="off" style="text-transform:uppercase"><button class="btn small" style="flex:0 0 auto" data-act="kb-import">Recevoir</button></div></div>`;
+}
+const declaredAbs = (cid, date) => players(cid).map(p => ({ p, a:(S.data.absences || {})[absKey(cid, date, p)] })).filter(x => x.a);
 function ensureDraft(catId) {
   if (S.draft && S.draft.catId === catId) return;
-  const last = sessions(catId)[0], presence = {};
-  players(catId).forEach(p => presence[p] = last && last.presence && p in last.presence ? last.presence[p] : true);
-  S.draft = newDraft(catId, { presence });
+  S.draft = newDraft(catId, { presence:{}, retard:{}, motif:{} });
+  applyDeclared(S.draft);
+}
+// Tout le monde présent par défaut, sauf les absences signalées par les parents
+function applyDeclared(dr) {
+  dr.retard = dr.retard || {}; dr.motif = dr.motif || {};
+  players(dr.catId).forEach(p => { const a = (S.data.absences || {})[absKey(dr.catId, dr.date, p)]; if (a) { dr.presence[p] = false; dr.motif[p] = a.motif; } });
 }
 function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1900); }
 const ICON_ALERT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>';
@@ -898,7 +988,7 @@ function setVersion(v) {
   S.data.club.version = v; S.data.club.modules = S.data.club.modules || {};
   MODULES.forEach(m => S.data.club.modules[m.id] = v !== 'v1'); // V0 et V2 : tous les modules
   // Il grandit et le Plateau du jour font partie de la V2
-  S.data.club.modules.croissance = true; S.data.club.modules.plateaujour = true; S.data.club.modules.communaute = true; // dans les 3 versions
+  S.data.club.modules.croissance = true; S.data.club.modules.plateaujour = true; S.data.club.modules.communaute = true; S.data.club.modules.presences = true; // dans les 3 versions
 }
 // Sans module Présences, chaque séance concerne tout le groupe.
 const attended = (s, p) => (mod('presences') && s.presence && Object.keys(s.presence).length) ? !!s.presence[p] : true;
@@ -1229,7 +1319,8 @@ function renderEducFill(embedded) {
     const nPerso = playerNotes(catId, p).length;
     h += `<div class="player${on ? '' : ' absent'}${myStar ? ' is-mvp' : ''}" id="pl-${i}"><div class="player-top"><span class="jersey ${c.sport}">${initials(p)}</span>
       <span class="player-name">${esc(p)}${vig ? '<span class="dot" title="À surveiller"></span>' : ''}${overdue && on ? `<span class="rot-tag" title="Séances sans mot individuel ni étoile">💬 ${rr.never ? 'jamais' : rr.since}</span>` : ''}${match && on && !hasSeasonStar(catId, p) ? '<span class="no-star">pas encore d\'étoile</span>' : ''}</span>
-      ${mod('presences') ? `<button class="presence${on ? ' on' : ''}" data-act="presence" data-p="${esc(p)}">${on ? 'Présent' : 'Absent'}</button>` : ''}</div>`;
+      ${mod('presences') ? `<button class="presence${on ? (dr.retard && dr.retard[p] ? ' late' : ' on') : ' off'}" data-act="presence" data-p="${esc(p)}">${on ? (dr.retard && dr.retard[p] ? '⏰ Retard' : 'Présent') : 'Absent'}</button>` : ''}</div>`;
+    if (mod('presences') && !on) h += `<div class="motif-row"><span class="label" style="margin:0">Motif ${(S.data.absences || {})[absKey(catId, dr.date, p)] ? '(signalé par les parents)' : '(facultatif)'}</span><div class="chips" style="margin:.3rem 0 0">` + MOTIFS.map(([k, l]) => `<button class="chip${(dr.motif || {})[p] === k ? ' active' : ''}" data-act="motif" data-p="${esc(p)}" data-id="${k}">${l}</button>`).join('') + '</div></div>';
     if (on) {
       h += '<div class="badges">' + badgesFor(dt, catId).map(b => `<button class="badge${bs.includes(b.id) ? ' on' : ''}" data-act="badge" data-p="${esc(p)}" data-b="${b.id}">${bs.includes(b.id) ? '🏅 ' : ''}${b.label}</button>`).join('') + '</div>';
       h += `<div class="player-tools">
@@ -1278,11 +1369,12 @@ function renderEducMessages() {
 }
 function renderEducGroupe() {
   let h = catHeader(); const catId = S.catId, c = cat(catId);
-  h += '<div class="subnav">' + [['joueurs','Joueurs'],['rotation','Rotation 💬'],['suivi','Suivi & bilan']].map(([k, l]) => `<button class="${S.gsub === k ? 'active' : ''}" data-act="gsub" data-id="${k}">${l}</button>`).join('') + '</div>';
+  h += '<div class="subnav">' + [['joueurs','Joueurs'],['objectifs','Objectifs 🎯'],['rotation','Rotation 💬'],['suivi','Suivi & bilan']].map(([k, l]) => `<button class="${S.gsub === k ? 'active' : ''}" data-act="gsub" data-id="${k}">${l}</button>`).join('') + '</div>';
   if (S.gsub === 'rotation') return h + renderRotation(catId);
+  if (S.gsub === 'objectifs') return h + renderObjectives(catId);
   if (S.gsub !== 'suivi') { const qk = players(catId).map(p => ({ p, qs:qualities(catId, p) })).filter(x => x.qs.length);
     const qc = qk.length ? `<div class="card quali-card"><strong>🌟 Ce qu'on remarque dans le groupe</strong>` + qk.map(x => `<p class="quali-line"><b>${esc(x.p)}</b> ${x.qs.map(y => y.q.ic + ' ' + y.q.txt).join(' · ')}<small>${x.qs.map(y => y.n + ' badges en ' + y.sessions + ' séances').join(' · ')}</small></p>`).join('') + '<p class="hint" style="margin:.3rem 0 0">Au moins 3 badges de la même famille, en 3 séances, sur 4 semaines ou plus. Visible aussi par les parents.</p></div>' : '';
-    return h + qc + renderRoster(catId); }
+    return h + qc + renderRoster(catId) + bilanImportCard(catId); }
   const month = inDays(catId, 30), mots = month.reduce((n, s) => n + eventMots(catId, s).length, 0);
   const secs = month.map(s => s.fillSec).filter(Boolean), avg = secs.length ? Math.round(secs.reduce((a, b) => a + b, 0) / secs.length) : null;
   const r = mod('presences') ? presenceRate(catId, month) : null;
@@ -1343,13 +1435,14 @@ function renderParentChild(child, fam) {
   const counts = badgeCounts(c.id, name);
   const badgeRow = list => '<div class="badges" style="margin-top:.2rem">' + list.map(b => `<span class="badge static${counts[b.id] ? ' on' : ' dim'}">${b.label}${counts[b.id] > 1 ? ' ×' + counts[b.id] : ''}</span>`).join('') + '</div>';
   h += `<h2 class="section">Sa collection de badges</h2><div class="card"><span class="label">Badges d'entraînement · ${esc(c.age)}</span>${badgeRow(badgesTrain(c.id))}${c.type === 'academie' ? '' : `<span class="label" style="margin-top:.8rem">Badges de plateau</span>${badgeRow(BADGES_PLATEAU)}`}</div>`;
-  h += qualitiesCard(c.id, name, false);
+  h += qualitiesCard(c.id, name, false) + objCardParent(c.id, name);
+  h += `<button class="g-line" data-act="kb-open" data-k="${esc(c.id + '|' + name)}"><span>📄</span><span><b>Bilan de saison de ${esc(first)}</b><small>À garder, et à transmettre au prochain club ou au prochain éducateur</small></span><span>›</span></button>`;
   const myStars = starsOfChild(c.id, name).reverse();
   if (myStars.length) h += '<h2 class="section">Ses étoiles de plateau</h2>' + myStars.slice(0, 3).map(x => starCardHTML(x.st, x.s, c.id, false)).join('');
   if (mod('presences')) {
-    const all = sessions(c.id), month = inDays(c.id, 30), pres = month.filter(s => s.presence && s.presence[name]).length;
-    h += `<h2 class="section">Présences</h2><div class="scoreboard"><div class="scoreboard-title"><strong>${esc(first)}</strong><span>${monthLabel()}</span></div><div class="scores"><div class="score"><b>${pres}/${month.length}</b><small>présences ce mois</small></div></div></div>`;
-    all.slice(0, 8).forEach(s => { const p = s.presence && s.presence[name]; h += `<div class="session${p ? '' : ' off'}${p && isMatch(s.type) ? ' match' : ''}"><span><span class="session-date">${fmtDate(s.date)}</span> — ${TYPE_LABEL[s.type] || s.type}</span><strong>${p ? 'Présent' : 'Absent'}</strong></div>`; });
+    const all = sessions(c.id), month = inDays(c.id, 30), pres = month.filter(s => s.presence && s.presence[name]).length, late = month.filter(s => s.presence && s.presence[name] && (s.retard || {})[name]).length;
+    h += `<h2 class="section">Présences</h2><div class="scoreboard"><div class="scoreboard-title"><strong>${esc(first)}</strong><span>30 derniers jours</span></div><div class="scores"><div class="score"><b>${pres}/${month.length}</b><small>présences</small></div><div class="score"><b>${late}</b><small>retard${late > 1 ? 's' : ''}</small></div></div></div>`;
+    all.slice(0, 8).forEach(s => h += `<div class="session${s.presence && s.presence[name] ? '' : ' off'}${s.presence && s.presence[name] && isMatch(s.type) ? ' match' : ''}"><span><span class="session-date">${fmtDate(s.date)}</span> — ${TYPE_LABEL[s.type] || s.type}</span><strong>${presTxt(s, name)}</strong></div>`);
   }
   return h;
 }
@@ -1555,7 +1648,7 @@ function renderRoster(catId) {
   const list = players(catId);
   const c = cat(catId);
   let h = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem"><span class="label">${list.length} joueur${list.length > 1 ? 's' : ''} dans l'effectif</span><span class="label">Date de naissance</span></div>` +
-    list.map(p => `<div class="roster-row"><span class="jersey ${c.sport}">${initials(p)}</span><span class="name">${esc(p)}${S.data.consent[catId + '|' + p] === false ? ' <span title="Pas d\'autorisation photo">📵</span>' : ''}</span><input type="date" aria-label="Date de naissance de ${esc(p)}" data-bind="data.birthdays.${esc(catId + '|' + p)}" data-live="1" value="${S.data.birthdays[catId + '|' + p] || ''}"><button class="x" data-act="roster-del" data-p="${esc(p)}" aria-label="Retirer ${esc(p)}">✕</button></div>`).join('') +
+    list.map(p => `<div class="roster-row"><span class="jersey ${c.sport}">${initials(p)}</span><span class="name">${esc(p)}${S.data.consent[catId + '|' + p] === false ? ' <span title="Pas d\'autorisation photo">📵</span>' : ''}${((S.data.parcours || {})[catId + '|' + p] || []).length ? `<button class="kb-chip" data-act="kb-view" data-k="${esc(catId + '|' + p)}">📄 Bilan ${esc(S.data.parcours[catId + '|' + p].slice(-1)[0].snap.club)}</button>` : ''}</span><input type="date" aria-label="Date de naissance de ${esc(p)}" data-bind="data.birthdays.${esc(catId + '|' + p)}" data-live="1" value="${S.data.birthdays[catId + '|' + p] || ''}"><button class="x" data-act="roster-del" data-p="${esc(p)}" aria-label="Retirer ${esc(p)}">✕</button></div>`).join('') +
     `<div class="row" style="margin-top:.8rem"><input type="text" data-bind="newPlayer" value="${esc(S.newPlayer)}" placeholder="Ajouter un joueur (Prénom Nom)"><button class="btn small" style="flex:0 0 auto" data-act="roster-add-one">Ajouter</button></div>` +
     '<p class="hint">Retirer un joueur ne supprime pas son historique.</p></div>';
   h += '<h2 class="section">Importer tout l\'effectif</h2><div class="card"><p class="hint" style="margin:0 0 .6rem">Plus besoin de tout retaper : importe une photo de ta liste, un fichier, ou colle-la directement.</p><div class="import-btns">' +
@@ -1854,6 +1947,7 @@ function notifsFor() {
   } else {
     const e = edu(s.id);
     e.cats.forEach(cid => {
+      if (mod('presences')) Object.entries(S.data.absences || {}).filter(([k]) => k.startsWith(cid + '|') && k.split('|')[1] >= todayISO()).forEach(([k, a]) => { const [, dt, n] = k.split('|'); out.push({ ts:a.ts, ic:'🙋', title:n + ' sera absent' + (a.motif ? ' (' + motifLabel(a.motif).toLowerCase() + ')' : ''), text:'Séance du ' + dayTxt(dt) + ' · déjà noté dans l\'appel', go:'seance' }); });
       if (mod('convocations')) plans(cid).forEach(pl => Object.entries(pl.replies || {}).forEach(([n, r]) => out.push({ ts:r.ts, ic:r.v === 'oui' ? '✅' : '❌', title:n + (r.v === 'oui' ? ' : présence confirmée' : ' : absence signalée'), text:TYPE_LABEL[pl.type] + ' du ' + fmtDate(pl.date) + ' — ' + cat(cid).name, go:'plateaux', cat:cid })));
       if (mod('communaute') && on('photos')) posts(cid).filter(p => (p.viewer || '').startsWith('fam:')).forEach(p => out.push({ ts:p.ts, ic:'📸', title:'Nouvelle photo de ' + p.author, text:p.caption || cat(cid).name, go:'fil' }));
     });
@@ -2079,7 +2173,7 @@ function wrappedSlides() {
 }
 
 // ===================== SIMULATION (sept. 2026 → janv. 2027) =====================
-const SIM_TODAY = '2026-10-20', SIM_VER = 19;
+const SIM_TODAY = '2026-10-20', SIM_VER = 20;
 function simPlaceholder(label, emoji, c1, c2) {
   try {
     const cv = document.createElement('canvas'); cv.width = 640; cv.height = 420; const x = cv.getContext('2d'); if (!x) return null;
@@ -2190,6 +2284,27 @@ function buildSimulation() {
     D.sessions[cid] = list;
     pl.forEach(p => { if (rnd() < .35) (D.playerNotes[cid + '|' + p] = []).push({ date:'2026-10-08', ts:at('2026-10-08', '21:00'), text:pick(PERSO), author:cf.edu }); });
   });
+  // Retards et motifs d'absence (sans toucher au tirage aléatoire de la simulation)
+  { const hh = s => { let h = 5; for (const ch of s) h = (h * 33 + ch.codePointAt(0)) >>> 0; return h; };
+    Object.keys(D.sessions).forEach(cid => D.sessions[cid].forEach(s => { s.retard = {}; s.motif = {}; Object.keys(s.presence || {}).forEach(p => { const v = hh(s.date + p);
+      if (s.presence[p] && v % 9 === 0) s.retard[p] = true; if (!s.presence[p] && v % 4 !== 0) s.motif[p] = MOTIFS[v % 5][0]; }); })); }
+  // Objectifs de la saison, fixés mi-septembre
+  D.seasonObj = {}; D.childObj = {};
+  CATEGORIES.forEach(c => { const l = objList(c.id); D.seasonObj[c.id] = { group:c.bgroup === 'u89' ? [l[1], l[2], l[6]] : [l[0], l[1], l[5]], set:'2026-09-16' }; });
+  CATEGORIES.forEach(c => players(c.id).forEach(p => { let v = 3; for (const ch of c.id + p) v = (v * 29 + ch.codePointAt(0)) >>> 0; if (v % 3 === 0) D.childObj[c.id + '|' + p] = { extra:[], done:{ [D.seasonObj[c.id].group[v % 2]]:['2026-09-30','2026-10-07','2026-10-14'][v % 3] } }; }));
+  D.childObj['u8|Mattéo'] = { extra:['Se démarquer pour recevoir le ballon'], done:{ 'Faire une passe au bon moment':'2026-10-14' } };
+  D.childObj['u8|Sami'] = { extra:[], done:{ 'Respecter les adversaires et l\'arbitre':'2026-10-07' } };
+  D.childObj['u7|Adam'] = { extra:['Oser aller vers le but'], done:{ 'Jouer avec les deux pieds':'2026-10-07', 'Oser aller vers le but':'2026-10-17' } };
+  D.childObj['u9|Farid'] = { extra:[], done:{ 'Faire une passe au bon moment':'2026-10-12', 'Respecter les adversaires et l\'arbitre':'2026-09-30' } };
+  // Absence signalée par les parents de Bilal pour la séance de ce soir
+  D.absences = { ['u8|' + SIM_TODAY + '|Bilal']:{ motif:'malade', ts:at(SIM_TODAY, '08:12'), by:'parent' } };
+  // Idriss (U9) est arrivé cette saison avec le bilan de son ancien club ; un bilan à recevoir (code BIL-7351)
+  D.parcours = { 'u9|Idriss':[{ ts:at('2026-09-07', '10:00'), snap:{ name:'Idriss', birth:'', cat:'U8', club:'AS Gémenos', saison:'2025-2026', date:'2026-06-20', presence:{ n:27, total:31, late:2 },
+    objectifs:[{ l:'Conduire le ballon des deux pieds', done:'2026-03-11' }, { l:'Faire une passe au bon moment', done:null }], qualites:['🦁 ose souvent tenter des choses, sans avoir peur de se tromper'], badges:[['Ose dribbler', 4], ['Conduite de balle', 3]], stars:[['Étoile de l\'effort', 1]],
+    mots:[{ date:'2026-06-17', text:'Idriss a fait une très belle saison, il a pris confiance et ose beaucoup plus. À pousser sur les passes.', author:'Éducateur U8 de l\'AS Gémenos' }], parcours:[] } }] };
+  D.transfers = { 'BIL-7351':{ name:'Ilan', birth:'2018-04-02', cat:'U8', club:'SCAAB', saison:'2025-2026', date:'2026-06-24', presence:{ n:24, total:30, late:3 },
+    objectifs:[{ l:'Utiliser son pied faible', done:null }, { l:'Encourager les copains', done:'2026-02-04' }], qualites:['🤝 pense souvent aux autres et joue pour l\'équipe', '👂 est souvent très attentif aux consignes'], badges:[['Esprit d\'équipe', 5], ['Super écoute', 3], ['Jeu collectif', 2]], stars:[['Étoile du comportement', 2]],
+    mots:[{ date:'2026-06-10', text:'Ilan est un super coéquipier, toujours le premier à encourager les autres. Il doit encore oser davantage avec le ballon.', author:'Éducateur U8 du SCAAB' }], parcours:[] } };
   // Farid (U9) : le collectif revient souvent (démo de « Ce qu'on remarque »)
   { const u9 = (D.sessions['u9'] || []).filter(s => s.type === 'entrainement').sort((a, b) => a.date < b.date ? -1 : 1);
     ['2026-09-14', '2026-09-30', '2026-10-12'].forEach((dt, i) => { const s = u9.find(x => x.date >= dt); if (!s) return; s.presence['Farid'] = true; s.badges['Farid'] = [...new Set((s.badges['Farid'] || []).concat(i === 1 ? 'esprit' : 'passe'))]; }); }
@@ -2261,10 +2376,10 @@ function buildSimulation() {
   // Il grandit (module famille, privé) : Adam (suivi simple) et Ilyes (suivi complet), avec les mesures du brief
   D.club.modules.croissance = true;
   D.birthdays['u7|Adam'] = '2020-11-18'; D.birthdays['academie|Ilyes'] = '2014-03-14'; D.birthdays['academie|Inès'] = '2017-05-21';
-  const gm = rows => rows.map(([d, h, foot, sh, w]) => sh ? { d, h, foot, sh, w } : { d, h, foot });
+  const gm = rows => rows.map(([d, h, foot, sh, w]) => sh ? { d, h, foot, sh, w } : w ? { d, h, foot, w } : { d, h, foot });
   D.growth = {
     'u7|Adam': { on:true, sex:'m', since:'2025-09-14', introSeen:true, weeks:{}, obs:{}, boots:[{ d:'2025-09-14', size:27 }, { d:'2026-09-13', size:29 }],
-      m:gm([['2025-09-14',109.3,26],['2025-10-12',109.8,26],['2025-11-09',110.3,26.5],['2025-12-14',110.9,26.5],['2026-01-11',111.4,26.5],['2026-02-08',111.9,27],['2026-03-08',112.4,27],['2026-04-12',112.9,27],['2026-05-10',113.5,27.5],['2026-06-14',114.0,27.5],['2026-07-12',114.5,27.5],['2026-08-16',115.0,28],['2026-09-13',115.5,28],['2026-10-11',115.9,28],['2026-11-08',116.4,28],['2027-01-03',117.4,28.5],['2027-03-07',118.4,29],['2027-05-09',119.3,29],['2027-06-13',119.8,29.5]]),
+      m:gm([['2025-09-14',109.3,26,null,18.4],['2025-10-12',109.8,26],['2025-11-09',110.3,26.5],['2025-12-14',110.9,26.5],['2026-01-11',111.4,26.5,null,19.0],['2026-02-08',111.9,27],['2026-03-08',112.4,27],['2026-04-12',112.9,27],['2026-05-10',113.5,27.5,null,19.7],['2026-06-14',114.0,27.5],['2026-07-12',114.5,27.5],['2026-08-16',115.0,28,null,20.3],['2026-09-13',115.5,28],['2026-10-11',115.9,28,null,20.6],['2026-11-08',116.4,28],['2027-01-03',117.4,28.5],['2027-03-07',118.4,29],['2027-05-09',119.3,29],['2027-06-13',119.8,29.5]]),
       firsts:{ entrainement:{ d:'2026-09-09' }, plateau:{ d:'2026-10-03' }, but:{ d:'2026-10-17', img:simPlaceholder('Premier but !', '⚽', '#F2711C', '#9A4205') }, tournoi:{ d:'2027-04-17' } } },
     'academie|Ilyes': { on:true, sex:'m', since:'2025-10-12', introSeen:true, weeks:{}, obs:{ '2026-10':{ genoux:true } }, boots:[{ d:'2026-08-29', size:41.5 }, { d:'2026-12-24', size:42.5 }],
       // octobre 2025 → octobre 2026 : mesures du brief ; novembre → janvier : prolongées au même rythme pour la simulation
@@ -2325,12 +2440,13 @@ function simGuide() {
   const v2 = S.data.club.version === 'v2', fam = n => (families().find(f => f.children.some(c => c.name === n)) || {}).code;
   const row = (n, txt) => { const c = fam(n); return c ? `<button class="demo-row" data-act="demo-login" data-id="${c}"><span class="code">${c}</span><span>${txt}</span></button>` : ''; };
   return `<div class="card sim-card"><span class="label">🧪 Simulation — ${longDate(todayISO())} 2026, vacances de la Toussaint (les entraînements continuent)</span>
-    <p class="hint" style="margin:.3rem 0 .7rem">${v2 ? 'V2 : la progression plus les modules convocations, appel, messagerie, calendrier, communauté, Il grandit et Plateau du jour.' : 'V1 : la progression des enfants et la communauté. Le club garde SportEasy pour les convocations, l\'appel et la messagerie.'} Touche un code pour entrer dans une famille :</p>
+    <p class="hint" style="margin:.3rem 0 .7rem">${v2 ? 'V2 : la progression plus les modules convocations, appel, messagerie, calendrier, communauté, Il grandit et Plateau du jour.' : 'V1 : la progression des enfants, l\'appel (présent, retard, absent) et la communauté. Le club garde SportEasy pour les convocations et la messagerie.'} Touche un code pour entrer dans une famille :</p>
     ${row('Mattéo', 'Mattéo (U8) & Inès (Académie) — accueil Famille, 🆕 un mot et un badge mercredi, étoile de l\'effort au plateau de samedi' + (v2 ? ', convoqué le 7 novembre' : ''))}
     ${row('Walid', 'Walid (U9) & Adam (U7) — étoile pour Walid au plateau de samedi' + (gOn() ? ' · 📏 Il grandit : Adam, né en novembre, carnet des premières fois' : ''))}
     ${gOn() ? row('Ilyes', 'Ilyes (Académie, 12 ans) — 📏 Il grandit, suivi complet : période sensible, croissance rapide') : ''}
     ${row('Sami', v2 ? 'Sami (U8) — c\'est son anniversaire aujourd\'hui' : 'Sami (U8) — un mot de l\'éducateur mercredi')}
-    ${row('Bilal', 'Bilal (U8) — pas encore mis en avant : l\'éducateur le voit dans « À mettre en avant »')}
+    ${row('Bilal', 'Bilal (U8) — ses parents ont signalé une absence (malade) pour ce soir : Oula le voit déjà dans l\'appel')}
+    <p class="hint">🎯 Objectifs de la saison : Éducateur → Mon groupe → « Objectifs ». 📄 Bilan qui suit l'enfant : côté parent, en bas du suivi ; côté éducateur U9, Idriss est arrivé avec le bilan de l'AS Gémenos, et le code <b>BIL-7351</b> (Ilan, du SCAAB) se saisit dans Mon groupe → Joueurs.</p>
     <p class="hint">🧢 Éducateur : le mardi, seuls les U8 s'entraînent (17h30). Entre avec <b>Oula</b> : elle peut prévenir les parents, puis remplir l'après-séance en passant à 19h30. Sur l'écran « Aujourd'hui », passe à mercredi 21 pour voir <b>Nassuf</b>, <b>Thomas</b> (U6 + U9) ou <b>Naël</b> (Académie).</p>
     ${pjOn() ? '<p class="hint">🏟️ Plateau du jour (samedi 7 novembre, 19 équipes, 5 terrains) : Espace club → « Plateau du jour », ou « Coach d\'un autre club » avec le code 4821.</p>' : ''}
     ${gOn() ? '<p class="hint">📏 Il grandit : onglet en bas de l\'écran parent. Tu peux y rejouer la saison mois par mois.</p>' : ''}
@@ -2342,7 +2458,14 @@ function pjAllauch(date) {
   return pjMake({ id:'pj-allauch', code:'5172', host:'US Allauch', date, kind:'district', format:'5 contre 5', cat:'U8-U9', lieu:'Stade municipal d\'Allauch', start:'09:30', dur:12, pause:3, fields:4, perTeam:4,
     teamsText:['Allauch 1','Allauch 2','Allauch 3','Minots 1','Minots 2','Minots 3','Plan-de-Cuques 1','Plan-de-Cuques 2','Aubagne 1','Aubagne 2','Gémenos 1','Septèmes'].join('\n') });
 }
+function ensureDemoTransfer() {
+  if ((S.data.transfers || {})['BIL-7351']) return;
+  (S.data.transfers = S.data.transfers || {})['BIL-7351'] = { name:'Ilan', birth:'2018-04-02', cat:'U8', club:'SCAAB', saison:'2025-2026', date:'2026-06-24', presence:{ n:24, total:30, late:3 },
+    objectifs:[{ l:'Utiliser son pied faible', done:null }, { l:'Encourager les copains', done:'2026-02-04' }], qualites:['🤝 pense souvent aux autres et joue pour l\'équipe', '👂 est souvent très attentif aux consignes'], badges:[['Esprit d\'équipe', 5], ['Super écoute', 3], ['Jeu collectif', 2]], stars:[['Étoile du comportement', 2]],
+    mots:[{ date:'2026-06-10', text:'Ilan est un super coéquipier, toujours le premier à encourager les autres. Il doit encore oser davantage avec le ballon.', author:'Éducateur U8 du SCAAB' }], parcours:[] };
+}
 function ensureDemoPj() {
+  ensureDemoTransfer();
   if (!(S.data.plateaux || []).some(p => p.id === 'pj-allauch')) { const d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7) + 7); (S.data.plateaux = S.data.plateaux || []).push(pjAllauch(localISO(d))); (S.data.pjInvites = S.data.pjInvites || {})['pj-allauch'] = { status:'nouveau', cats:['u8','u9'] }; }
   const list = (S.data.plateaux = S.data.plateaux || []), ex = list.find(p => p.code === '4821');
   if (ex) { if (!ex.kind) { ex.kind = 'district'; ex.format = '5 contre 5'; ex.live = ex.live || {}; } if (ex.lieu === 'Stade du club') ex.lieu = CLUB.stade; ex.ateliers = (ex.ateliers || []).map(a => a === 'Jonglage' ? 'Jongles' : a); return; }
@@ -2356,7 +2479,7 @@ function v0Guide() {
   const row = (n, txt) => { const c = fam(n); return c ? `<button class="demo-row" data-act="demo-login" data-id="${c}"><span class="code">${c}</span><span>${txt}</span></button>` : ''; };
   return `<div class="card sim-card"><span class="label">V0 — la vraie appli, sans simulation</span><p class="hint" style="margin:.3rem 0 .6rem">Tout est actif. Rien n'est encore saisi : publie une séance comme éducateur, puis regarde ce que reçoit le parent. Codes familles (tous dans Espace club → Membres) :</p>
     ${row('Mattéo', 'Mattéo (U8) & Inès (Académie)')}${row('Walid', 'Walid (U9) & Adam (U7)')}${row('Yanis', 'Yanis (U6)')}${row('Ilyes', 'Ilyes (Académie)')}
-    <p class="hint" style="margin:.5rem 0 0">🏟️ Coach d'un autre club : code <b>4821</b> (plateau de démonstration de samedi).</p></div>`;
+    <p class="hint" style="margin:.5rem 0 0">🏟️ Coach d'un autre club : code <b>4821</b> (plateau de démonstration de samedi). 📄 Bilan d'un nouveau joueur : code <b>BIL-7351</b> à saisir côté éducateur, dans Mon groupe → Joueurs.</p></div>`;
 }
 
 // ===================== AUJOURD'HUI (éducateur) : ce qu'il y a à faire maintenant =====================
@@ -2463,6 +2586,8 @@ function todayCard(x, e) {
     else h += `<button class="link-btn" style="margin-bottom:.4rem" data-act="pre-open" data-cat="${x.cid}" data-date="${x.date}">Modifier le message</button>`;
     const bd = bdaysFor(x.cid, x.date);
     if (bd.length) h += `<div class="bday-card">🎂 <span>Anniversaire à fêter à la séance : ${bd.map(b => bdayLine(b, x.date)).join(' · ')}</span></div>`;
+    const da = mod('presences') ? declaredAbs(x.cid, x.date) : [];
+    if (da.length) h += `<p class="today-line">🙋 Absence${da.length > 1 ? 's' : ''} signalée${da.length > 1 ? 's' : ''} par les parents : ${da.map(y => `<b>${esc(y.p)}</b>${y.a.motif ? ' (' + esc(motifLabel(y.a.motif).toLowerCase()) + ')' : ''}`).join(', ')}. Déjà notée${da.length > 1 ? 's' : ''} dans l'appel.</p>`;
     if (due.length) h += `<p class="today-line">💬 À mettre en avant ${x.next ? 'à la prochaine séance' : 'aujourd\'hui'} : ${due.map(r => `<b>${esc(r.p)}</b>`).join(', ')}</p>`;
     h += `<p class="hint">Après la séance, cette carte te proposera l'après-séance${pm && pm.themes.length ? ', avec le thème déjà rempli' : ''}.</p>`;
   } else if (x.st === 'pendant') {
@@ -2529,15 +2654,22 @@ function siblingSameDay(k, date) {
   const wd = new Date(date + 'T12:00:00').getDay();
   return fam.children.filter(o => o.name !== k.name || o.catId !== k.catId).map(o => { const s = (cat(o.catId).slots || []).find(x => x.d === wd); return s ? `<p class="sib-line">👫 ${esc(o.name.split(' ')[0])} a aussi entraînement ce jour-là, ${slotTxt(s)} (${esc(cat(o.catId).name)}, ${esc(cat(o.catId).lieu || '')}).</p>` : ''; }).join('');
 }
+function absBox(k, date) {
+  if (!mod('presences') || !date) return '';
+  const key = absKey(k.catId, date, k.name), a = (S.data.absences || {})[key], first = k.name.split(' ')[0];
+  if (a) return `<p class="abs-line">🙋 Absence signalée${a.motif ? ' (' + esc(motifLabel(a.motif).toLowerCase()) + ')' : ''}. L'éducateur est prévenu. <button class="link-btn" data-act="abs-cancel" data-k="${esc(key)}">Annuler</button></p>`;
+  if (S.absOpen === key) return `<div class="abs-box"><span class="label">${esc(first)} ne pourra pas venir. Pourquoi ? (facultatif)</span><div class="chips">` + MOTIFS.map(([m, l]) => `<button class="chip" data-act="abs-send" data-k="${esc(key)}" data-id="${m}">${l}</button>`).join('') + `</div><button class="link-btn" data-act="abs-close">Fermer</button></div>`;
+  return `<button class="link-btn abs-open" data-act="abs-open" data-k="${esc(key)}">🙋 Prévenir d'une absence</button>`;
+}
 function parentNextCard(k) {
   const c = cat(k.catId), td = todaySlots([k.catId])[0];
   if (td && td.st !== 'publie') {
     const pm = premsgOf(k.catId, td.date), st = { avant:'à venir', pendant:'en ce moment', apres:'terminée, le retour de l\'éducateur arrive bientôt' }[td.st];
-    return `<div class="card next-card"><span class="label">📅 Séance d'aujourd'hui</span><b>${slotTxt(td.s)} · ${st}</b><small>${esc(c.lieu || '')}</small>${siblingSameDay(k, td.date)}${pm ? preMsgBox(pm) : ''}</div>` + parentPlateauCard(k);
+    return `<div class="card next-card"><span class="label">📅 Séance d'aujourd'hui</span><b>${slotTxt(td.s)} · ${st}</b><small>${esc(c.lieu || '')}</small>${siblingSameDay(k, td.date)}${pm ? preMsgBox(pm) : ''}${td.st === 'apres' ? '' : absBox(k, td.date)}</div>` + parentPlateauCard(k);
   }
   const n = nextSlot(k.catId); if (!n) return parentPlateauCard(k);
   const pm = premsgOf(k.catId, n.date);
-  return `<div class="card next-card"><span class="label">📅 Prochaine séance</span><b>${cap1(nextTxt(n))}</b><small>${esc(c.lieu || '')}</small>${siblingSameDay(k, n.date)}${pm ? preMsgBox(pm) : ''}</div>` + parentPlateauCard(k);
+  return `<div class="card next-card"><span class="label">📅 Prochaine séance</span><b>${cap1(nextTxt(n))}</b><small>${esc(c.lieu || '')}</small>${siblingSameDay(k, n.date)}${pm ? preMsgBox(pm) : ''}${absBox(k, n.date)}</div>` + parentPlateauCard(k);
 }
 function renderFamilyHome(fam) {
   const since = parentLastVisit(fam.code);
@@ -2572,6 +2704,7 @@ function renderGrowInfo() {
       <li><b>Estimation de la pointure</b> : on prolonge l'évolution de son propre pied sur au moins 6 mois. Le pied grandit de façon régulière pendant l'enfance (Anderson, Blais et Green, « Lengths of the growing foot », Journal of Bone and Joint Surgery, 1956). Avec moins de 6 mois de mesures, on n'estime pas.</li>
       <li><b>Tailles de vêtements</b> : le barème européen des tailles enfant, exprimé en centimètres de hauteur (norme EN 13402), utilisé par les marques de vêtements et d'équipements de sport.</li>
       <li><b>Crampons</b> : la pointure estimée plus une demi-pointure de marge pour le confort.</li>
+      <li><b>Poids</b> : noté par vous, facultatif avant U10. Il aide à trancher entre deux tailles pour les shorts et les pantalons (beaucoup de guides de marques donnent un poids). MaSaison ne calcule aucun indice de corpulence et ne commente jamais le poids : c'est le rôle du médecin.</li>
       <li><b>Âge relatif</b> : les catégories se font par année de naissance. Ce décalage entre enfants nés en janvier et en décembre est bien documenté dans le sport de jeunes (« effet de l'âge relatif »).</li>
       <li><b>Phase et pic de croissance</b> (à partir de U10) : formule de Mirwald (2002), utilisée notamment par la Fédération suisse de football et Swiss Olympic, avec une précision annoncée d'environ un an.</li>
       <li><b>Taille adulte</b> : MaSaison ne la calcule pas. Seul un médecin peut l'estimer sérieusement.</li></ul></div>
@@ -2590,6 +2723,7 @@ function renderGrowCompare(child) {
     <table class="g-cmp"><tr><th></th><td>${cap1(gMonthName(a.d))}</td><td>${cap1(gMonthName(last.d))}</td><td>Évolution</td></tr>` +
     row('Taille', fr1(a.h) + ' cm', fr1(last.h) + ' cm', '+' + fr1(last.h - a.h) + ' cm') +
     row('Pointure', frP(a.foot), frP(last.foot), last.foot > a.foot ? '+' + frP(last.foot - a.foot) : 'pareil') +
+    (a.w && last.w ? row('Poids', fr1(a.w) + ' kg', fr1(last.w) + ' kg', (last.w >= a.w ? '+' : '') + fr1(last.w - a.w) + ' kg') : '') +
     row('Vêtements', sz(a.h), sz(last.h), sz(a.h) === sz(last.h) ? 'même taille' : 'taille au-dessus') +
     (ba || bb ? row('Crampons', ba ? frP(ba) : '—', bb ? frP(bb) : '—', ba && bb && bb > ba ? '+' + frP(bb - ba) : '') : '') + `</table>
     <p class="hint" style="margin:.4rem 0 0">En ${Math.max(1, Math.round(gMonths(a.d, last.d)))} mois, ${esc(first)} a grandi de ${fr1(last.h - a.h)} cm.</p></div>`;
@@ -2603,7 +2737,7 @@ function renderGrowCompare(child) {
     <div><small>Vêtements</small><b>${gSize(eh + 2) ? gSize(eh + 2)[0] : 'adulte'}</b><span>avec la marge, norme EN 13402</span></div>
     <div><small>Pointure</small><b>${ef !== null ? '≈ ' + frP(ef) : '—'}</b><span>${ef !== null ? 'son rythme : +' + frP(Math.round(fr * 2) / 2) + ' par an' : 'pas encore 6 mois de mesures'}</span></div>
     <div><small>Crampons à prévoir</small><b>${ef !== null ? frP(ef + .5) : '—'}</b><span>pointure + ½ de marge</span></div></div>
-    <p class="hint" style="margin:.5rem 0 0">📚 Taille : son propre rythme ${vel.measured ? 'des ' + vel.months + ' derniers mois (' + fr1(vel.v) + ' cm par an)' : '(repère OMS tant qu\'il y a moins de 3 mois de mesures)'}, marge de 2 cm. Pointure : l'évolution de son pied sur 6 mois ou plus (le pied grandit de façon régulière pendant l'enfance, Anderson et al., 1956). Ce n'est pas un avis médical : détails dans « Comment ça marche ».</p></div>`;
+    <p class="hint" style="margin:.5rem 0 0">📚 Taille : son propre rythme ${vel.measured ? 'des ' + vel.months + ' derniers mois (' + fr1(vel.v) + ' cm par an)' : '(repère OMS tant qu\'il y a moins de 3 mois de mesures)'}, marge de 2 cm. Pointure : l'évolution de son pied sur 6 mois ou plus (le pied grandit de façon régulière pendant l'enfance, Anderson et al., 1956). Pas d'estimation de poids : seul un médecin peut l'interpréter. Ce n'est pas un avis médical : détails dans « Comment ça marche ».</p></div>`;
   return h;
 }
 function gSizesCard(st, first) {
@@ -2643,7 +2777,7 @@ function clubWeek(scope) {
 function versionPicker() {
   const v = S.data.simDate ? S.data.club.version : 'v0';
   const desc = { v0:'La vraie appli, complète, sans simulation : vraies catégories, vrais éducateurs, vrais horaires, date et heure réelles. Rien n\'est encore saisi : tout ce que tu fais reste enregistré.',
-    v1:'Simulation du début de saison jusqu\'au mardi 20 octobre 2026, avec la progression des enfants et la communauté (le club garde SportEasy pour le reste).',
+    v1:'Simulation du début de saison jusqu\'au mardi 20 octobre 2026, avec la progression des enfants, l\'appel et la communauté (le club garde SportEasy pour le reste).',
     v2:'Simulation complète du début de saison jusqu\'au mardi 20 octobre 2026, avec tous les modules. La version à montrer au président.' }[v] || '';
   return `<div class="card ver-card"><span class="label">Version présentée</span><div class="segment ver-seg">` +
     [['v0','V0','Vraie appli'],['v1','V1','Simu. progression'],['v2','V2','Simu. complète']].map(([k, a, b]) => `<button class="${v === k ? 'active' : ''}" data-act="pick-version" data-id="${k}"><b>${a}</b><small>${b}</small></button>`).join('') +
@@ -2920,10 +3054,10 @@ function gMeasureForm(key, st, first) {
   const lvl = st.lvl, f = S.gForm && S.gForm.key === key ? S.gForm : (S.gForm = { key, h:'', sh:'', w:'', foot:st.last ? st.last.foot : '' });
   return `<div class="card"><strong>📏 Mesure de ${gMonthName(st.asOf)}</strong><p class="hint" style="margin:.2rem 0 .6rem">Dos au mur, pieds nus, le matin si possible. ${lvl === 2 ? 'Taille assise : assis sur une chaise contre le mur, du siège jusqu\'au sommet de la tête.' : ''}</p>
     <div class="grid2"><div><label class="label">Taille (cm)</label><input type="text" inputmode="decimal" data-bind="gForm.h" value="${esc(f.h)}" placeholder="${st.last ? fr1(st.last.h) : 'ex : 121,5'}"></div>
-    <div><label class="label">Pointure</label><div class="g-stepper"><button class="g-step" data-act="gf-foot" data-d="-0.5" aria-label="Moins">−</button><span class="g-val">${f.foot === '' ? '—' : frP(f.foot)}</span><button class="g-step" data-act="gf-foot" data-d="0.5" aria-label="Plus">+</button></div></div>` +
-    (lvl === 2 ? `<div><label class="label">Taille assise (cm)</label><input type="text" inputmode="decimal" data-bind="gForm.sh" value="${esc(f.sh)}" placeholder="${st.last && st.last.sh ? fr1(st.last.sh) : 'ex : 80'}"></div>
-    <div><label class="label">Poids (kg)</label><input type="text" inputmode="decimal" data-bind="gForm.w" value="${esc(f.w)}" placeholder="ex : 42"></div>` : '') + '</div>' +
-    (lvl === 2 ? '<p class="hint" style="margin:0">Le poids sert uniquement au calcul du pic de croissance. Il n\'est jamais affiché.</p>' : '') +
+    <div><label class="label">Pointure</label><div class="g-stepper"><button class="g-step" data-act="gf-foot" data-d="-0.5" aria-label="Moins">−</button><span class="g-val">${f.foot === '' ? '—' : frP(f.foot)}</span><button class="g-step" data-act="gf-foot" data-d="0.5" aria-label="Plus">+</button></div></div>
+    <div><label class="label">Poids (kg)${lvl === 2 ? '' : ' · facultatif'}</label><input type="text" inputmode="decimal" data-bind="gForm.w" value="${esc(f.w)}" placeholder="${st.last && st.last.w ? fr1(st.last.w) : 'ex : 21'}"></div>` +
+    (lvl === 2 ? `<div><label class="label">Taille assise (cm)</label><input type="text" inputmode="decimal" data-bind="gForm.sh" value="${esc(f.sh)}" placeholder="${st.last && st.last.sh ? fr1(st.last.sh) : 'ex : 80'}"></div>` : '') + '</div>' +
+    '<p class="hint" style="margin:0">Le poids reste privé : visible par vous seul, jamais par le club. Il complète la taille pour choisir les vêtements' + (lvl === 2 ? ' et sert au calcul du pic de croissance' : '') + '.</p>' +
     `<button class="btn block" data-act="grow-save" data-k="${esc(key)}">Enregistrer la mesure</button></div>`;
 }
 function gWeekCard(key, st, ro) {
@@ -2979,8 +3113,8 @@ function renderGrow(child) {
   if (hi) h += `<div class="card g-hi"><p style="margin:0">${hi.ic} ${esc(hi.text)}</p></div>`;
   if (lvl === 2) h += gPhaseCard(st, first) + gWeekCard(key, st, ro);
   h += gRelCard(key, g, st, first, false) + gCarnetCard(key, g, asOf, ro);
-  h += `<div class="g-tiles"><div class="g-tile"><small>Taille</small><b>${fr1(st.last.h)} cm</b><small>mesurée le ${fmtDate(st.last.d)}</small></div><div class="g-tile"><small>Pointure</small><b>${frP(st.last.foot)}</b><small>${st.vel.measured ? '≈ ' + fr1(st.vel.v) + ' cm par an' : 'vitesse : repère moyen'}</small></div></div>`;
-  h += `<div class="card"><strong>👕 Vêtements</strong><p style="margin:.3rem 0 0">${Il} porte du ${gSizeTxt(st.size)}.</p>${st.next ? `<p class="hint" style="margin:.2rem 0 0">${st.next.when === 'soon' ? `${Il} passera au ${st.next.size[0]} dans les prochaines semaines.` : `${Il} devrait passer au ${st.next.size[0]} vers ${gMonthYear(st.next.when)}.`}</p>` : ''}</div>`;
+  h += `<div class="g-tiles"><div class="g-tile"><small>Taille</small><b>${fr1(st.last.h)} cm</b><small>mesurée le ${fmtDate(st.last.d)}</small></div><div class="g-tile"><small>Pointure</small><b>${frP(st.last.foot)}</b><small>${st.vel.measured ? '≈ ' + fr1(st.vel.v) + ' cm par an' : 'vitesse : repère moyen'}</small></div>${st.last.w ? `<div class="g-tile"><small>Poids</small><b>${fr1(st.last.w)} kg</b><small>privé, visible par vous seul</small></div>` : ''}</div>`;
+  h += `<div class="card"><strong>👕 Vêtements</strong><p style="margin:.3rem 0 0">${Il} porte du ${gSizeTxt(st.size)}.</p><p class="hint" style="margin:.2rem 0 0">La taille enfant se choisit d'abord à la hauteur (norme EN 13402).${st.last.w ? ` Entre deux tailles, son poids (${fr1(st.last.w)} kg) aide à trancher pour les shorts et les pantalons : regardez le guide de la marque, beaucoup indiquent aussi un poids.` : ' Ajoutez son poids à la prochaine mesure : il aide à trancher entre deux tailles pour les shorts et les pantalons.'}</p>${st.next ? `<p class="hint" style="margin:.2rem 0 0">${st.next.when === 'soon' ? `${Il} passera au ${st.next.size[0]} dans les prochaines semaines.` : `${Il} devrait passer au ${st.next.size[0]} vers ${gMonthYear(st.next.when)}.`}</p>` : ''}</div>`;
   const mo = +asOf.slice(5,7);
   if (mo >= 6 && mo <= 10) h += `<div class="card"><strong>🎽 Dotation du club ou de l'académie</strong><p style="margin:.3rem 0 0">Pour une tenue qui tienne jusqu'en juin, commandez le <b>${st.dot.size ? st.dot.size[0] : 'taille adulte'}</b> : ${il} devrait mesurer environ ${Math.round(st.dot.pred)} cm le 30 juin.</p></div>`;
   const b = st.boots, bo = S.gBoots && S.gBoots.key === key ? S.gBoots : null;
@@ -3432,7 +3566,7 @@ function renderEventDetail(s, catId, childName, all) {
   if (childName) {
     const bs = ((s.badges || {})[childName] || []).map(badgeInfo).filter(Boolean), my = (s.stars || []).filter(x => x.name === childName), mm = parentNotes(catId, childName).filter(n => n.eventId === sid(s));
     const team = mod('convocations') && s.teams > 1 && s.team && s.team[childName];
-    h += `<div class="card objective"><span class="label">Pour ${esc(first)} ce jour-là</span>` + (hasPres ? `<p>${attended(s, childName) ? 'Présent' : 'Absent'}${team ? ' — Équipe ' + team : ''}</p>` : '') +
+    h += `<div class="card objective"><span class="label">Pour ${esc(first)} ce jour-là</span>` + (hasPres ? `<p>${presTxt(s, childName)}${team ? ' — Équipe ' + team : ''}</p>` : '') +
       mm.map(n => `<div class="mot" style="margin:.5rem 0 0"><p>${esc(n.text)}</p><small>${esc(n.author || 'L\'éducateur')}</small></div>`).join('') +
       (bs.length ? '<div class="badges">' + bs.map(b => `<span class="badge static on">🏅 ${b.label}</span>`).join('') + '</div>' : '') +
       (!mm.length && !bs.length && !my.length ? '<p class="hint" style="margin:.2rem 0 0">Rien de personnel cette fois-ci : chaque enfant est mis en avant à tour de rôle.</p>' : '') + '</div>';
@@ -3504,11 +3638,12 @@ function render() {
     html = renderTab();
   }
   if (S.pjWelcome && S.session && S.session.type === 'coach' && pjGet(S.session.id)) html += renderPjWelcome(pjGet(S.session.id));
+  if (S.kidBilan && S.session) html += renderKidBilan();
   if (S.splash) html += renderSplash();
   app.innerHTML = html + (S.wrapped !== null ? renderWrapped() : '') + (S.story ? renderStory() : '') + (S.gBilan && S.session && S.session.type === 'parent' ? renderGrowBilan() : '');
   renderChrome();
   if (S.scrollTo) { const el = document.getElementById(S.scrollTo); S.scrollTo = null; if (el) { el.scrollIntoView({ block:el.id === 'fill' ? 'start' : 'center' }); el.focus({ preventScroll:true }); } }
-  document.body.style.overflow = S.splash || (S.pjWelcome && S.session && S.session.type === 'coach') || S.wrapped !== null || S.story || S.gBilan ? 'hidden' : '';
+  document.body.style.overflow = S.kidBilan || S.splash || (S.pjWelcome && S.session && S.session.type === 'coach') || S.wrapped !== null || S.story || S.gBilan ? 'hidden' : '';
   const stp = document.getElementById('story-photo'); if (stp) stp.onchange = () => stp.files[0] && compressImage(stp.files[0], u => { if (S.story) { S.story.photo = u; storyRegen(); } });
   const gfp = document.getElementById('gfirst-photo'); if (gfp) gfp.onchange = () => gfp.files[0] && compressImage(gfp.files[0], u => { if (S.gFirst) { S.gFirst.img = u; render(); } });
   const sp = document.getElementById('star-photo'); if (sp) sp.onchange = () => sp.files[0] && compressImage(sp.files[0], u => { S.starDraft.img = u; render(); });
@@ -3597,6 +3732,30 @@ document.addEventListener('click', e => {
     }
     case 'pre-close': S.preDraft = null; break;
     case 'gtab': S.gTab = d.id; S.growAt = null; S.gForm = null; window.scrollTo(0,0); break;
+    case 'gobj': { const so = ((S.data.seasonObj = S.data.seasonObj || {})[catId] = S.data.seasonObj[catId] || { group:[], set:todayISO() }), i = so.group.indexOf(d.v);
+      if (i >= 0) so.group.splice(i, 1); else { if (so.group.length >= 3) { toast('3 objectifs de groupe au plus'); return; } so.group.push(d.v); so.set = so.set || todayISO(); } save(); break; }
+    case 'cobj-done': { const k = catId + '|' + p, c = ((S.data.childObj = S.data.childObj || {})[k] = S.data.childObj[k] || { extra:[], done:{} }); c.done = c.done || {}; if (c.done[d.v]) delete c.done[d.v]; else { c.done[d.v] = todayISO(); toast('🎯 Objectif atteint pour ' + p.split(' ')[0]); } save(); break; }
+    case 'cobj-panel': S.objPanel = S.objPanel === p ? null : p; break;
+    case 'cobj-add': { const k = catId + '|' + p, c = ((S.data.childObj = S.data.childObj || {})[k] = S.data.childObj[k] || { extra:[], done:{} }); c.extra = c.extra || []; if (c.extra.length < 2 && !c.extra.includes(d.v)) c.extra.push(d.v); S.objPanel = null; save(); break; }
+    case 'cobj-clear': { const c = (S.data.childObj || {})[catId + '|' + p]; if (c) { (c.extra || []).forEach(l => delete (c.done || {})[l]); c.extra = []; } save(); break; }
+    case 'kb-open': { const [cid, ...nm] = d.k.split('|'); S.kidBilan = { cid, name:nm.join('|') }; break; }
+    case 'kb-close': S.kidBilan = null; break;
+    case 'kb-print': window.print(); return;
+    case 'kb-transfer': { const b = S.kidBilan; let h = 7; for (const ch of b.cid + b.name + todayISO()) h = (h * 31 + ch.codePointAt(0)) >>> 0; const code = 'BIL-' + (h % 9000 + 1000);
+      (S.data.transfers = S.data.transfers || {})[code] = kidSnap(b.cid, b.name); b.code = code; save();
+      try { navigator.clipboard.writeText(`Voici le bilan de saison de ${b.name.split(' ')[0]} sur MaSaison. Code : ${code}`).catch(() => {}); } catch (err) {}
+      toast('Code ' + code + ' copié : donnez-le au nouveau club'); break; }
+    case 'kb-import': {
+      const code = String((document.getElementById('kb-code') || {}).value || '').trim().toUpperCase().replace(/^BIL-?/, 'BIL-'), sn = (S.data.transfers || {})[code];
+      if (!sn) { toast('Code inconnu : vérifie avec les parents'); return; }
+      const first = sn.name.split(' ')[0]; if (!players(catId).includes(first)) S.data.rosters[catId] = players(catId).concat(first);
+      const k = catId + '|' + first; ((S.data.parcours = S.data.parcours || {})[k] = S.data.parcours[k] || []).push({ snap:sn, ts:now().toISOString() });
+      if (sn.birth) S.data.birthdays[k] = sn.birth; S.draft = null; save(); S.kidBilan = { cid:catId, name:first, snap:sn, from:sn.club }; toast('📄 Bilan de ' + first + ' reçu : ' + first + ' est ajouté au groupe'); break; }
+    case 'kb-view': { const [cid, ...nm] = d.k.split('|'), x = (S.data.parcours || {})[d.k].slice(-1)[0]; S.kidBilan = { cid, name:nm.join('|'), snap:x.snap, from:x.snap.club }; break; }
+    case 'abs-open': S.absOpen = d.k; break;
+    case 'abs-close': S.absOpen = null; break;
+    case 'abs-send': { (S.data.absences = S.data.absences || {})[d.k] = { motif:d.id, ts:now().toISOString(), by:'parent' }; S.absOpen = null; save(); toast('🙋 L\'éducateur est prévenu'); break; }
+    case 'abs-cancel': { delete (S.data.absences || {})[d.k]; save(); toast('Absence annulée'); break; }
     case 'grow-child': S.growChild = d.id; S.growAt = null; S.gForm = null; S.gMsg = null; S.gBoots = null; S.gFirst = null; S.gAct = null; break;
     case 'go-grandit': S.tab = 'grandit'; S.growChild = d.k; S.growAt = null; window.scrollTo(0,0); break;
     case 'gsizes-copy': try { navigator.clipboard.writeText(d.t).then(() => toast('Tailles copiées'), () => toast('Copie impossible ici : sélectionnez le texte')); } catch (err) { toast('Copie impossible ici : sélectionnez le texte'); } return;
@@ -3711,8 +3870,9 @@ document.addEventListener('click', e => {
       if (foot === null) { toast('Indiquez la pointure'); return; }
       if (lvl === 2 && (!sh || sh < 40 || sh >= h)) { toast('Indiquez la taille assise en cm'); return; }
       if (lvl === 2 && (!w || w < 12 || w > 150)) { toast('Indiquez le poids en kg'); return; }
+      if (lvl !== 2 && w && (w < 8 || w > 150)) { toast('Le poids semble incorrect (en kg)'); return; }
       g.m = g.m.filter(x => x.d.slice(0,7) !== t.slice(0,7));
-      const rec = { d:t, h, foot }; if (lvl === 2) { rec.sh = sh; rec.w = w; }
+      const rec = { d:t, h, foot }; if (lvl === 2) { rec.sh = sh; rec.w = w; } else if (w) rec.w = w;
       g.m.push(rec); S.gForm = null; save(); toast('Mesure enregistrée'); break;
     }
     case 'gw': { const g = gOf(d.k), wk = gLastSunday(todayISO()), w = ((g.weeks = g.weeks || {})[wk] = g.weeks[wk] || {}); w[d.t] = Math.max(0, Math.min(14, (+w[d.t] || 0) + +d.d)); save(); break; }
@@ -3778,7 +3938,7 @@ document.addEventListener('click', e => {
     case 'switch-profile': document.getElementById('push').classList.remove('show'); S.session = null; S.parentCode = null; S.tab = null; S.loginStep = null; S.wrapped = null; S.planDraft = null; saveSession(); window.scrollTo(0,0); break;
     case 'logout': S.session = null; S.parentCode = null; S.tab = null; S.loginStep = null; S.wrapped = null; saveSession(); window.scrollTo(0,0); break;
     case 'go-account': if (S.session && S.session.type === 'test') { S.session = null; saveSession(); } else { S.tab = 'compte'; } window.scrollTo(0,0); break;
-    case 'tab': S.gFirst = null; S.growAt = null; S.gMsg = null; S.gBilan = null; S.gBoots = null; S.tab = d.id; S.openMatch = null; S.calDay = null; S.wrapped = null; S.composeOpen = false; S.panel = null; S.recapEdit = null; S.dict = null; window.scrollTo(0,0); break;
+    case 'tab': S.kidBilan = null; S.gFirst = null; S.growAt = null; S.gMsg = null; S.gBilan = null; S.gBoots = null; S.tab = d.id; S.openMatch = null; S.calDay = null; S.wrapped = null; S.composeOpen = false; S.panel = null; S.recapEdit = null; S.dict = null; window.scrollTo(0,0); break;
     case 'cat': S.catId = d.id; S.draft = null; S.panel = null; S.openMatch = null; S.importText = ''; S.importMsg = ''; S.calDay = null; S.recapEdit = null; S.dict = null; break;
     case 'sub': S.sub = d.id; S.openMatch = null; S.calDay = null; break;
     case 'gsub': S.gsub = d.id; break;
@@ -3906,7 +4066,11 @@ document.addEventListener('click', e => {
     case 'roster-replace': if (!applyRoster(catId, 'replace')) return; break;
     case 'roster-merge': if (!applyRoster(catId, 'merge')) return; break;
     case 'stype': markStart(); S.draft.type = d.id; S.draft.badges = {}; S.draft.stars = {}; S.draft.recap.themes = []; if (!S.draft.recap.edited) S.draft.recap.text = recapBuild(S.draft, edu(S.eduId).name); S.panel = null; break;
-    case 'presence': markStart(); S.draft.presence[p] = !S.draft.presence[p]; break;
+    case 'presence': { markStart(); const dr = S.draft; dr.retard = dr.retard || {}; dr.motif = dr.motif || {};
+      // Présent → Retard → Absent → Présent
+      if (dr.presence[p] && !dr.retard[p]) dr.retard[p] = true; else if (dr.presence[p]) { delete dr.retard[p]; dr.presence[p] = false; } else { dr.presence[p] = true; delete dr.motif[p]; }
+      break; }
+    case 'motif': { const dr = S.draft; dr.motif = dr.motif || {}; dr.motif[p] = dr.motif[p] === d.id ? undefined : d.id; if (!dr.motif[p]) delete dr.motif[p]; break; }
     case 'badge': {
       markStart(); const arr = S.draft.badges[p] || [], i = arr.indexOf(d.b);
       if (i !== -1) arr.splice(i, 1); else arr.push(d.b);
@@ -3934,7 +4098,7 @@ document.addEventListener('click', e => {
       const secs = dr.startedAt ? Math.min(900, Math.max(1, Math.round((Date.now() - dr.startedAt) / 1000))) : null;
       const badges = {}; Object.keys(dr.badges).forEach(x => { if (elig(x) && (dr.badges[x] || []).length) badges[x] = dr.badges[x].slice(); });
       const stars = isMatch(dr.type) ? Object.entries(dr.stars || {}).filter(([n, v]) => v && v.type && elig(n)).map(([n, v], k) => ({ id:nid + 's' + k, name:n, type:v.type, text:(v.text || '').trim(), img:null, ts, by:e.name })) : [];
-      (S.data.sessions[catId] = S.data.sessions[catId] || []).push({ id:nid, date:dr.date, type:dr.type, presence:mod('presences') ? { ...dr.presence } : {}, badges, vigilance:{ ...dr.vigilance }, lieu:(dr.lieu || '').trim(), adv:(dr.adv || '').trim(), rdv:dr.rdv || '', teams:dr.teams || 1, team:dr.team || {}, stars, cr:'', recap:{ text, ts, by:e.name }, planId:dr.planId || null, fillSec:secs, by:e.name });
+      (S.data.sessions[catId] = S.data.sessions[catId] || []).push({ id:nid, date:dr.date, type:dr.type, presence:mod('presences') ? { ...dr.presence } : {}, retard:mod('presences') ? Object.fromEntries(Object.keys(dr.retard || {}).filter(x => dr.presence[x]).map(x => [x, true])) : {}, motif:mod('presences') ? Object.fromEntries(Object.entries(dr.motif || {}).filter(([x]) => !dr.presence[x])) : {}, badges, vigilance:{ ...dr.vigilance }, lieu:(dr.lieu || '').trim(), adv:(dr.adv || '').trim(), rdv:dr.rdv || '', teams:dr.teams || 1, team:dr.team || {}, stars, cr:'', recap:{ text, ts, by:e.name }, planId:dr.planId || null, fillSec:secs, by:e.name });
       if (dr.planId) { const pl = plans(catId).find(x => x.id === dr.planId); if (pl) pl.sessionId = nid; }
       let nm = 0;
       Object.entries(dr.mots || {}).forEach(([x, t]) => { t = (t || '').trim(); if (!t || !elig(x)) return; nm++; const k = catId + '|' + x; (S.data.parentNotes[k] = S.data.parentNotes[k] || []).push({ date:dr.date, ts, text:t, author:e.name, eventId:nid }); });
@@ -4003,3 +4167,5 @@ render();
 </script>
 </body>
 </html>
+
+</body></html>
